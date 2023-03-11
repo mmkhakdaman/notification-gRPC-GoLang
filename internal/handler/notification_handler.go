@@ -21,7 +21,7 @@ func NewNotificationHandler(svc service.NotificationService) *NotificationHandle
 
 // SendNotification sends a notification to the specified recipient
 func (h *NotificationHandler) SendNotification(ctx context.Context, req *proto.SendNotificationRequest) (*proto.SendNotificationResponse, error) {
-	err := h.svc.SendNotification(req.Message, req.Recipient)
+	err := h.svc.SendNotification(req.Message, uint(req.Recipient), uint(req.Sender))
 	if err != nil {
 		// handle error
 		return nil, status.Errorf(codes.Internal, "failed to send notification: %v", err)

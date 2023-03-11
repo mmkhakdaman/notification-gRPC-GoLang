@@ -23,12 +23,9 @@ func NewGRPCServer() *GRPCServer {
 
 // Start starts the gRPC server and listens for incoming requests
 func (s *GRPCServer) Start() error {
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		return err
-	}
+	serverPort := config.GetEnv("SERVER_PORT")
 	// Create a listener on the specified port
-	lis, err := net.Listen("tcp", ":"+cfg.Port)
+	lis, err := net.Listen("tcp", ":"+serverPort)
 	if err != nil {
 		return err
 	}

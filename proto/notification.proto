@@ -10,7 +10,8 @@ service NotificationService {
 
 message SendNotificationRequest {
   string message = 1;
-  string recipient = 2;
+  uint32 recipient = 2;
+  uint32 sender = 3;
 }
 
 message SendNotificationResponse {}

@@ -6,7 +6,7 @@ import (
 
 // NotificationService is the interface for the notification service
 type NotificationService interface {
-	SendNotification(message string, recipient string) error
+	SendNotification(message string, recipient uint, sender uint) error
 }
 
 // NotificationServiceImpl is the implementation of the NotificationService interface
@@ -20,7 +20,7 @@ func NewNotificationService(repo repository.NotificationRepository) *Notificatio
 }
 
 // SendNotification sends a notification to the specified recipient
-func (s *NotificationServiceImpl) SendNotification(message string, recipient string) error {
+func (s *NotificationServiceImpl) SendNotification(message string, recipient uint, sender uint) error {
 	// implementation details for sending the notification
-	return s.repo.SaveNotification(message, recipient)
+	return s.repo.SaveNotification(message, recipient, sender)
 }
