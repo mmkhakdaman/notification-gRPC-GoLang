@@ -1,12 +1,11 @@
 package main
 
 import (
+	"google.golang.org/grpc"
 	"log"
 	"net"
-
-	"google.golang.org/grpc"
-
 	"notification-service/internal/config"
+	"notification-service/internal/database"
 	"notification-service/internal/handler"
 	"notification-service/internal/repository"
 	"notification-service/internal/service"
@@ -14,16 +13,28 @@ import (
 )
 
 func main() {
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("error loading config: %v", err)
-	}
+	// Load environment variables
+	config.LoadEnv()
 
+	serverPort := config.GetEnv("SERVER_PORT")
+
+	database.LoadDB()
+
+	loadGrpcServer(serverPort)
+}
+
+func runServer(serverPort string) net.Listener {
 	// Create a listener on the specified port
-	lis, err := net.Listen("tcp", ":"+cfg.Port)
+	lis, err := net.Listen("tcp", ":"+serverPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	return lis
+}
+
+func loadGrpcServer(serverPort string) {
+	lis := runServer(serverPort)
 
 	// Initialize the repository
 	repo := repository.NewNotificationRepository()
@@ -41,7 +52,7 @@ func main() {
 	proto.RegisterNotificationServiceServer(grpcServer, hdl)
 
 	// Start the server
-	log.Printf("starting server on port %s", cfg.Port)
+	log.Printf("starting server on port %s", serverPort)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
